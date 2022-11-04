@@ -55,6 +55,23 @@ class UrlResult
             $parameters['L'] = $this->siteRouteResult->getLanguage()->getLanguageId();
         }
 
+        if(isset($this->pageArguments->getArguments()['tx_llcatalog_pi'])) {
+            $catalog = $this->pageArguments->getArguments()['tx_llcatalog_pi'];
+            unset($catalog['filters']);
+
+            if(count($catalog)) {
+                $model = array_keys($catalog)[0];
+
+                $parameters = GeneralUtility::implodeArrayForUrl('', $parameters);
+                return sprintf(
+                    't3://catalog?model=%s&root=%s&uid=%s',
+                    $model,
+                    $this->siteRouteResult->getSite()->getRootPageId(),
+                    $catalog[$model],
+                );
+            }
+        }
+
         $parameters = GeneralUtility::implodeArrayForUrl('', $parameters);
         return sprintf('t3://page?%s', trim($parameters, '&'));
     }
